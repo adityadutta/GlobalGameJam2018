@@ -18,6 +18,9 @@ public class Enemy : MonoBehaviour
         }
 
         public int damage = 40;
+        public bool canPurify = false;
+        public bool isFlying = false;
+        public bool isHeavy = false;
 
         public void Init()
         {
@@ -28,8 +31,8 @@ public class Enemy : MonoBehaviour
     public EnemyStats enemyStats = new EnemyStats();
 
     public Transform deathParticles;
-    public float shakeAmount = 0.1f;
-    public float shakeLength = 0.1f;
+    //public float shakeAmount = 0.1f;
+    //public float shakeLength = 0.1f;
 
     [Header("Optional:")]
     [SerializeField]
@@ -80,7 +83,20 @@ public class Enemy : MonoBehaviour
         Player _player = _colInfo.collider.GetComponent<Player>();
         if (_player != null)
         {
-            _player.DamagePlayer(enemyStats.damage);
+            if (enemyStats.isFlying)
+            {
+                _player.DamagePlayer(enemyStats.damage);
+                DamageEnemy(99999);
+            }
+            else if (enemyStats.isHeavy)
+            {
+
+            }
+            else
+            {
+                _player.DamagePlayer(enemyStats.damage);
+                Debug.Log("Player damaged for " + enemyStats.damage);
+            }
         }
     }
 }

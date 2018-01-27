@@ -24,22 +24,22 @@ public class GameManager : MonoBehaviour {
     public Transform playerPrefab;
     public Transform spawnPoint;
     public int spawnDelay = 2;
-    public Transform spawnPrefab;
+   // public Transform spawnPrefab;
     public string spawnSoundName;
 
-    public CameraShake cameraShake;
+    //public CameraShake cameraShake;
 
-    [SerializeField]
-    private GameObject gameOverUI;
+    //[SerializeField]
+    //private GameObject gameOverUI;
 
     private AudioManager audioManager;
 
     private void Start()
     {
-        if(cameraShake == null)
-        {
-            Debug.Log("No camera shake in GM");
-        }
+        //if(cameraShake == null)
+        //{
+        //    Debug.Log("No camera shake in GM");
+        //}
 
         _remainingLives = maxLives;
 
@@ -53,17 +53,17 @@ public class GameManager : MonoBehaviour {
     public void EndGame()
     {
         Debug.Log("GAME OVER");
-        gameOverUI.SetActive(true);
+        //gameOverUI.SetActive(true);
     }
 
     public IEnumerator _RespawnPlayer()
     {
         yield return new WaitForSeconds(spawnDelay);
-        audioManager.PlaySound(spawnSoundName);
+        //audioManager.PlaySound(spawnSoundName);
 
         Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-        Transform clone = Instantiate(spawnPrefab, spawnPoint.position, spawnPoint.rotation) as Transform;
-        Destroy(clone.gameObject, 3f);
+        //Transform clone = Instantiate(spawnPrefab, spawnPoint.position, spawnPoint.rotation) as Transform;
+        //Destroy(clone.gameObject, 3f);
     }
 
     public static void KillPlayer(Player player)
@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour {
     public void _KillEnemy(Enemy _enemy)
     {
         Transform _clone = Instantiate(_enemy.deathParticles, _enemy.transform.position, Quaternion.identity) as Transform;
-        cameraShake.Shake(_enemy.shakeAmount, _enemy.shakeLength);
+        //cameraShake.Shake(_enemy.shakeAmount, _enemy.shakeLength);
         Destroy(_enemy.gameObject);
         Destroy(_clone.gameObject, 3f);
     }

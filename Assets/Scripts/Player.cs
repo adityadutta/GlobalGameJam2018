@@ -8,17 +8,29 @@ public class Player : MonoBehaviour {
     public class PlayerStats
     {
         public int maxHealth = 100;
+        public int maxMana = 100;
 
         private int _curHealth;
+        private int _curMana;
+
         public int curHealth
         {
             get { return _curHealth; }
             set { _curHealth = Mathf.Clamp(value, 0, maxHealth); }
         }
 
+        public int curMana
+        {
+            get { return _curMana; }
+            set { _curMana = Mathf.Clamp(value, 0, maxMana); }
+        }
+
+        public int damage = 30;
+
         public void Init()
         {
             curHealth = maxHealth;
+            curMana = 50;
         }
     }
 
@@ -27,7 +39,7 @@ public class Player : MonoBehaviour {
     public int fallBoundary = -10;
 
     [SerializeField]
-    private StatusIndicator statusIndicator;
+    private PlayerUIController playerStatusIndicator;
 
     public string deathSoundName;
 
@@ -45,13 +57,13 @@ public class Player : MonoBehaviour {
         }
 
 
-        if (statusIndicator == null)
+        if (playerStatusIndicator == null)
         {
             Debug.Log("No status indicator");
         }
         else
         {
-            statusIndicator.SetHealth(stats.curHealth, stats.maxHealth);
+            playerStatusIndicator.SetHealth(stats.curHealth, stats.maxHealth);
         }
     }
 
@@ -70,8 +82,6 @@ public class Player : MonoBehaviour {
             audioManager.PlaySound(deathSoundName);
         }
 
-        statusIndicator.SetHealth(stats.curHealth, stats.maxHealth);
+        playerStatusIndicator.SetHealth(stats.curHealth, stats.maxHealth);
     }
-
-
 }
