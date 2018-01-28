@@ -30,30 +30,33 @@ public class ArmScript : MonoBehaviour {
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D _colInfo)
+    private void OnTriggerEnter2D(Collider2D _colInfo)
     {
-        Enemy _enemy = _colInfo.collider.GetComponent<Enemy>();
-        if (Input.GetKey(KeyCode.Z))
+        if (_colInfo.tag == "Enemy" )
         {
-            if (_enemy != null)
+            Enemy _enemy = _colInfo.GetComponent<Enemy>();
+            if (Input.GetKey(KeyCode.Z))
             {
-                if (_enemy.enemyStats.canPurify == true && _player.stats.curMana > 10)
+                if (_enemy != null)
                 {
-                    _enemy.enemyStats.damage = 0;
-                    _enemy.GetComponentInChildren<SpriteRenderer>().color = Color.white;
-                    Physics2D.IgnoreCollision(_enemy.GetComponent<Collider2D>() , _player.GetComponent<Collider2D>());
-                    Physics2D.IgnoreCollision(_enemy.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-                    _enemy.GetComponentInChildren<SpriteRenderer>().sprite = purifiedHuman;
-                    zombieAnim.SetBool("isPurified", true);
-                    _player.stats.curMana -= 10;
-                    playerStatusIndicator.SetMana(_player.stats.curMana, _player.stats.maxMana);
+                    if (_enemy.enemyStats.canPurify == true && _player.stats.curMana > 10)
+                    {
+                        _enemy.enemyStats.damage = 0;
+                        _enemy.GetComponentInChildren<SpriteRenderer>().color = Color.white;
+                        Physics2D.IgnoreCollision(_enemy.GetComponent<Collider2D>(), _player.GetComponent<Collider2D>());
+                        Physics2D.IgnoreCollision(_enemy.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+                        _enemy.GetComponentInChildren<SpriteRenderer>().sprite = purifiedHuman;
+                        zombieAnim.SetBool("isPurified", true);
+                        _player.stats.curMana -= 10;
+                        playerStatusIndicator.SetMana(_player.stats.curMana, _player.stats.maxMana);
+                    }
                 }
             }
-        }
-        else
-        {
-            if(_enemy.enemyStats.damage != 0)
-                _enemy.DamageEnemy(_player.stats.damage);
+            else
+            {
+                if (_enemy.enemyStats.damage != 0)
+                    _enemy.DamageEnemy(_player.stats.damage);
+            }
         }
     }
 }
