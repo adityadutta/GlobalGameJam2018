@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -27,10 +28,13 @@ public class GameManager : MonoBehaviour {
    // public Transform spawnPrefab;
     public string spawnSoundName;
 
+    public Enemy enemyScript;
+    public GameObject bossZombie;
+
     //public CameraShake cameraShake;
 
-    //[SerializeField]
-    //private GameObject gameOverUI;
+    [SerializeField]
+    private GameObject gameOverUI;
 
     private AudioManager audioManager;
 
@@ -48,20 +52,38 @@ public class GameManager : MonoBehaviour {
         {
             Debug.Log("No audio manager found");
         }
+
+        gameOverUI.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if(enemyScript.isBossActive)
+        {
+            EndGame();
+        }
     }
 
     public void EndGame()
     {
         Debug.Log("GAME OVER");
-        //gameOverUI.SetActive(true);
+        gameOverUI.SetActive(true);
     }
 
     public IEnumerator _RespawnPlayer()
     {
         yield return new WaitForSeconds(spawnDelay);
         //audioManager.PlaySound(spawnSoundName);
+        if(SceneManager.GetActiveScene().name == "Forest")
+        {
+            SceneManager.LoadScene("Forest");
+        }
+        else if (SceneManager.GetActiveScene().name == "Village")
+        {
+            SceneManager.LoadScene("Village");
+        }
 
-        Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+        //Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
         //Transform clone = Instantiate(spawnPrefab, spawnPoint.position, spawnPoint.rotation) as Transform;
         //Destroy(clone.gameObject, 3f);
     }

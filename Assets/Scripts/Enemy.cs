@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     [System.Serializable]
     public class EnemyStats
     {
+        public bool isPurified = false;
         public int maxHealth = 100;
 
         private int _curHealth;
@@ -21,6 +22,8 @@ public class Enemy : MonoBehaviour
         public bool canPurify = false;
         public bool isFlying = false;
         public bool isHeavy = false;
+        public bool isTombstone = false;
+        public bool isBoss = false;
 
         public void Init()
         {
@@ -37,6 +40,11 @@ public class Enemy : MonoBehaviour
     [Header("Optional:")]
     [SerializeField]
     private StatusIndicator statusIndicator;
+
+    GameObject[] _enemies;
+    public bool isBossActive = false;
+
+    public GameObject gameOver;
 
     public string deathSoundName;
 
@@ -61,12 +69,35 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log("no particles");
         }
+
+        GameObject[] _enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in _enemies)
+        {
+            Physics2D.IgnoreCollision(enemy.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+        }
+
+        gameOver.SetActive(false);
+
+    }
+    
+    private void Update()
+    {
+        if (enemyStats.isPurified)
+        {
+            GetComponent<Animator>().SetBool("isPurified", true);
+            Destroy(this.gameObject, 6f);
+        }
+
+        if (enemyStats.isBoss && enemyStats.curHealth <= 0)
+        {
+            gameOver.SetActive(true);
+        }
     }
 
     public void DamageEnemy(int damage)
     {
         enemyStats.curHealth -= damage;
-        if (enemyStats.curHealth <= 0)
+        if (enemyStats.curHealth <= 0 && !enemyStats.isBoss)
         {
             GameManager.KillEnemy(this);
             audioManager.PlaySound(deathSoundName);
@@ -83,14 +114,16 @@ public class Enemy : MonoBehaviour
         Player _player = _colInfo.collider.GetComponent<Player>();
         if (_player != null)
         {
+            if (enemyStats.isPurified)
+            {
+                Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Player").GetComponent<Collider2D>(), GetComponent<Collider2D>());
+                Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Weapon").GetComponent<Collider2D>(), GetComponent<Collider2D>());
+            }
+
             if (enemyStats.isFlying)
             {
                 _player.DamagePlayer(enemyStats.damage);
                 DamageEnemy(99999);
-            }
-            else if (enemyStats.isHeavy)
-            {
-
             }
             else
             {

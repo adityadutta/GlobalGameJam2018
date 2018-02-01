@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArmScript : MonoBehaviour {
+public class ArmScript : MonoBehaviour
+{
 
     Animator anim;
     public Animator zombieAnim;
@@ -14,12 +15,21 @@ public class ArmScript : MonoBehaviour {
 
     Player _player;
 
+    private AudioManager audioManager;
+    public string hitSound;
+
     private void Start()
     {
+        audioManager = AudioManager.instance;
+        if (audioManager == null)
+        {
+            Debug.Log("No audio manager found");
+        }
+
         _player = GetComponentInParent<Player>();
 
         anim = GetComponentInParent<Animator>();
-        playerStatusIndicator.SetMana(_player.stats.curMana, _player.stats.maxMana);
+        // playerStatusIndicator.SetMana(_player.stats.curMana, _player.stats.maxMana);
     }
 
     private void Update()
@@ -32,31 +42,35 @@ public class ArmScript : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D _colInfo)
     {
-        if (_colInfo.tag == "Enemy" )
+        Enemy _enemy = _colInfo.GetComponent<Enemy>();
+        if (_enemy != null)
         {
-            Enemy _enemy = _colInfo.GetComponent<Enemy>();
             if (Input.GetKey(KeyCode.Z))
             {
-                if (_enemy != null)
+
+                if (_enemy.enemyStats.canPurify == true && _player.stats.curMana > 10)
                 {
-                    if (_enemy.enemyStats.canPurify == true && _player.stats.curMana > 10)
-                    {
-                        _enemy.enemyStats.damage = 0;
-                        _enemy.GetComponentInChildren<SpriteRenderer>().color = Color.white;
-                        Physics2D.IgnoreCollision(_enemy.GetComponent<Collider2D>(), _player.GetComponent<Collider2D>());
-                        Physics2D.IgnoreCollision(_enemy.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-                        _enemy.GetComponentInChildren<SpriteRenderer>().sprite = purifiedHuman;
-                        zombieAnim.SetBool("isPurified", true);
-                        _player.stats.curMana -= 10;
-                        playerStatusIndicator.SetMana(_player.stats.curMana, _player.stats.maxMana);
-                    }
+                    _enemy.enemyStats.damage = 0;
+                    _enemy.GetComponentInChildren<SpriteRenderer>().sprite = purifiedHuman;
+                    zombieAnim.SetBool("isPurified", true);
+                    _enemy.enemyStats.isPurified = true;
+                    _enemy.GetComponent<EnemyAI>().enabled = false;
+                    _player.stats.curMana -= 10;
+                    playerStatusIndicator.SetMana(_player.stats.curMana, _player.stats.maxMana);
                 }
+
+            }
+            else if (_enemy.enemyStats.isTombstone)
+            {
+                _enemy.DamageEnemy(_player.stats.damage);
             }
             else
             {
                 if (_enemy.enemyStats.damage != 0)
                     _enemy.DamageEnemy(_player.stats.damage);
             }
+            audioManager.PlaySound(hitSound);
         }
+
     }
 }

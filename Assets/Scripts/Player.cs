@@ -64,6 +64,7 @@ public class Player : MonoBehaviour {
         else
         {
             playerStatusIndicator.SetHealth(stats.curHealth, stats.maxHealth);
+            playerStatusIndicator.SetMana(stats.curMana, stats.maxMana);
         }
     }
 

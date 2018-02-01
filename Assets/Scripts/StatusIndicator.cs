@@ -7,8 +7,8 @@ public class StatusIndicator : MonoBehaviour {
 
     [SerializeField]
     private RectTransform healthBarRect;
-    [SerializeField]
-    private Text healthText;
+    //[SerializeField]
+    //private Text healthText;
 
     private void Start()
     {
@@ -16,10 +16,10 @@ public class StatusIndicator : MonoBehaviour {
         {
             Debug.Log("No health bar rect");
         }
-        if (healthText == null)
-        {
-            Debug.Log("No healthText");
-        }
+        //if (healthText == null)
+        //{
+        //    Debug.Log("No healthText");
+        //}
     }
 
     public void SetHealth(int _cur, int _max)
@@ -27,7 +27,7 @@ public class StatusIndicator : MonoBehaviour {
         float _value = (float)_cur / _max;
 
         healthBarRect.localScale = new Vector3(_value, healthBarRect.localScale.y, healthBarRect.localScale.z);
-        healthText.text = _cur + "/" + _max + " HP";
+       // healthText.text = _cur + "/" + _max + " HP";
 
     }
 }
